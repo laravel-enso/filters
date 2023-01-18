@@ -3,7 +3,7 @@
 use Faker\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
-use LaravelEnso\Filters\Enums\SearchModes;
+use LaravelEnso\Filters\Enums\SearchMode;
 use LaravelEnso\Filters\Services\Search;
 use Tests\TestCase;
 
@@ -61,7 +61,7 @@ class SearchTest extends TestCase
     {
         $search = $this->model->name[1];
         $query = (new Search(SearchTestModel::query(), ['name'], $search))
-            ->searchMode(SearchModes::Full)
+            ->searchMode(SearchMode::Full)
             ->handle();
 
         $this->assertTrue($this->model->is($query->first()));
@@ -72,7 +72,7 @@ class SearchTest extends TestCase
     {
         $search = $this->model->name;
         $query = (new Search(SearchTestModel::query(), ['name'], $search))
-            ->searchMode(SearchModes::ExactMatch)
+            ->searchMode(SearchMode::ExactMatch)
             ->handle();
 
         $this->assertTrue($this->model->is($query->first()));
@@ -83,7 +83,7 @@ class SearchTest extends TestCase
     {
         $search = $this->model->name[1];
         $query = (new Search(SearchTestModel::query(), ['name'], $search))
-            ->searchMode(SearchModes::ExactMatch)
+            ->searchMode(SearchMode::ExactMatch)
             ->handle();
 
         $this->assertEmpty($query->get());
@@ -94,7 +94,7 @@ class SearchTest extends TestCase
     {
         $search = $this->model->name[1];
         $query = (new Search(SearchTestModel::query(), ['name'], $search))
-            ->searchMode(SearchModes::DoesntContain)
+            ->searchMode(SearchMode::DoesntContain)
             ->handle();
 
         $this->assertEmpty($query->get());
@@ -105,7 +105,7 @@ class SearchTest extends TestCase
     {
         $search = $this->model->name[0];
         $query = (new Search(SearchTestModel::query(), ['name'], $search))
-            ->searchMode(SearchModes::StartsWith)
+            ->searchMode(SearchMode::StartsWith)
             ->handle();
 
         $this->assertTrue($this->model->is($query->first()));
@@ -116,7 +116,7 @@ class SearchTest extends TestCase
     {
         $search = substr($this->model->name, -1);
         $query = (new Search(SearchTestModel::query(), ['name'], $search))
-            ->searchMode(SearchModes::EndsWith)
+            ->searchMode(SearchMode::EndsWith)
             ->handle();
 
         $this->assertTrue($this->model->is($query->first()));

@@ -9,17 +9,6 @@ use Tests\TestCase;
 class IntervalValidatorTest extends TestCase
 {
     /** @test */
-    public function validates_type()
-    {
-        $type = 'unknown_type';
-
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage(Exception::type($type)->getMessage());
-
-        new Interval($type);
-    }
-
-    /** @test */
     public function validates_limit_requirement_on_manual_interval()
     {
         $this->expectException(Exception::class);

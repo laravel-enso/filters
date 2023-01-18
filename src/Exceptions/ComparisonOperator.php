@@ -3,16 +3,14 @@
 namespace LaravelEnso\Filters\Exceptions;
 
 use InvalidArgumentException;
+use LaravelEnso\Filters\Enums\ComparisonOperator as ComparisonEnum;
 
 class ComparisonOperator extends InvalidArgumentException
 {
-    public static function unknown()
+    public static function notInversable(ComparisonEnum $operator)
     {
-        return new static(__('Unknown comparison operator provided'));
-    }
-
-    public static function notInversable(string $operator)
-    {
-        return new static(__('The provided operator ":operator" is not inversable', ['operator' => $operator]));
+        return new static(__('The provided operator ":operator" is not inversable', [
+            'operator' => $operator->value,
+        ]));
     }
 }
