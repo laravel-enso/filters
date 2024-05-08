@@ -17,7 +17,7 @@ class Search
     private Builder $query;
     private Collection $attributes;
     private $search;
-    private ?Collection $relations;
+    private Collection $relations;
     private string $searchMode;
     private ComparisonOperators $operators;
     private string $comparisonOperator;
@@ -31,12 +31,12 @@ class Search
         $this->searchMode = SearchModes::Full;
         $this->operators = App::make(ComparisonOperators::class);
         $this->comparisonOperator = $this->operators::Like;
-        $this->relations = null;
+        $this->relations = new Collection();
     }
 
     public function relations(array $relations): self
     {
-        $this->relations = new Collection($relations);
+        $this->relations->push(...$relations);
 
         return $this;
     }
@@ -130,36 +130,16 @@ class Search
             : 'orWhere';
 
         $this->attributes->each(fn ($attribute) => $query
-            ->{$where}(fn ($query) => $this->matchAttribute($query, $attribute, $argument)));
+            ->{$where}(fn ($query) => $query
+                ->where($attribute, $this->comparisonOperator, $this->wildcards($argument))));
 
-        if (! $this->relations) {
-            return;
-        }
-
-        $this->relations->each(fn ($attribute) => $query
-            ->{$where}(fn ($query) => $this->matchAttribute($query, $attribute, $argument, true)));
-    }
-
-    private function matchAttribute(Builder $query, string $attribute, $argument, bool $relation = false): void
-    {
-        $query->when(
-            $relation && $this->isNested($attribute),
-            fn ($query) => $this->matchSegments($query, $attribute, $argument),
-            fn ($query) => $query->where($attribute, $this->comparisonOperator, $this->wildcards($argument))
-        );
-    }
-
-    private function isNested($attribute): bool
-    {
-        return Str::contains($attribute, '.');
-    }
-
-    private function matchSegments(Builder $query, string $attribute, $argument)
-    {
-        $attributes = new Collection(explode('.', $attribute));
-
-        $query->whereHas($attributes->shift(), fn ($query) => $this
-            ->matchAttribute($query, $attributes->implode('.'), $argument, true));
+        $this->relations->each(fn ($relation) => $query
+            ->{$where}(fn ($query) => $query->whereRelation(
+                Str::beforeLast($relation, '.'),
+                Str::afterLast($relation, '.'),
+                $this->comparisonOperator,
+                $this->wildcards($argument)
+            )));
     }
 
     private function wildcards($argument): string
