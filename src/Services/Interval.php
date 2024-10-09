@@ -176,7 +176,7 @@ class Interval implements Iterator
 
     private function custom(): self
     {
-        $days = $this->max->diffInDays($this->min);
+        $days = (int) $this->max->diffInDays($this->min, true);
 
         if ($days === 1) {
             $this->hourly();
