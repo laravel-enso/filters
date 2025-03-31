@@ -94,8 +94,10 @@ class IntervalTest extends TestCase
     /** @test */
     public function can_generate_last_month_interval()
     {
-        $this->initialStart = Carbon::today()->subMonth()->startOfMonth();
-        $this->initialEnd = Carbon::today()->subMonth()->startOfMonth()->addDay();
+        $this->initialStart = Carbon::today()->startOfMonth()
+            ->subMonth()->startOfMonth();
+        $this->initialEnd = Carbon::today()->startOfMonth()
+            ->subMonth()->startOfMonth()->addDay();
         $this->type = Intervals::LastMonth;
         $this->daily();
     }
@@ -130,8 +132,10 @@ class IntervalTest extends TestCase
     /** @test */
     public function can_generate_next_month_interval()
     {
-        $this->initialStart = Carbon::today()->addMonth()->startOfMonth();
-        $this->initialEnd = Carbon::today()->addMonth()->startOfMonth()->addDay();
+        $this->initialStart = Carbon::today()->startOfMonth()
+            ->addMonth()->startOfMonth();
+        $this->initialEnd = Carbon::today()->startOfMonth()
+            ->addMonth()->startOfMonth()->addDay();
         $this->type = Intervals::NextMonth;
         $this->daily();
     }
