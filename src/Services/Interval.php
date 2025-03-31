@@ -32,7 +32,6 @@ class Interval implements Iterator
 
         $this->labels = [];
         $this->adjustment = Adjustments::get($this->type);
-
         $this->scenario()->init();
     }
 
@@ -142,7 +141,8 @@ class Interval implements Iterator
 
     private function months(): self
     {
-        $this->min = Carbon::today()->addMonths($this->adjustment)->startOfMonth();
+        $this->min = Carbon::today()->startOfMonth()
+            ->addMonths($this->adjustment)->startOfMonth();
         $this->max = $this->min->copy()->addMonth();
 
         return $this;
@@ -159,7 +159,8 @@ class Interval implements Iterator
 
     private function years(): self
     {
-        $this->min = Carbon::today()->addYears($this->adjustment)->startOfYear();
+        $this->min = Carbon::today()->startOfYear()
+            ->addYears($this->adjustment)->startOfYear();
         $this->max = $this->min->copy()->addYear();
 
         return $this;
