@@ -5,12 +5,11 @@ namespace LaravelEnso\Filters\Services;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
-use LaravelEnso\Filters\Enums\ComparisonOperators;
-use LaravelEnso\Filters\Enums\SearchModes;
-use LaravelEnso\Filters\Exceptions\ComparisonOperator;
-use LaravelEnso\Filters\Exceptions\SearchMode;
+use LaravelEnso\Filters\Enums\ComparisonOperator;
+use LaravelEnso\Filters\Enums\SearchMode;
+use LaravelEnso\Filters\Exceptions\ComparisonOperator as ComparisonException;
+use LaravelEnso\Filters\Exceptions\SearchMode as SearchModeException;
 
 class Search
 {
@@ -18,9 +17,8 @@ class Search
     private Collection $attributes;
     private $search;
     private Collection $relations;
-    private string $searchMode;
-    private ComparisonOperators $operators;
-    private string $comparisonOperator;
+    private SearchMode $searchMode;
+    private ComparisonOperator $comparisonOperator;
     private static array $searchProvider;
 
     public function __construct(Builder $query, array $attributes, $search)
@@ -28,9 +26,8 @@ class Search
         $this->query = $query;
         $this->attributes = new Collection($attributes);
         $this->search = $search;
-        $this->searchMode = SearchModes::Full;
-        $this->operators = App::make(ComparisonOperators::class);
-        $this->comparisonOperator = $this->operators::Like;
+        $this->searchMode = SearchMode::Full;
+        $this->comparisonOperator = ComparisonOperator::Like;
         $this->relations = new Collection();
     }
 
@@ -43,11 +40,11 @@ class Search
 
     public function searchMode(string $searchMode): self
     {
-        if (! SearchModes::keys()->contains($searchMode)) {
-            throw SearchMode::unknown();
+        if (SearchMode::tryFrom($searchMode) === null) {
+            throw SearchModeException::unknown();
         }
 
-        $this->searchMode = $searchMode;
+        $this->searchMode = SearchMode::from($searchMode);
 
         $this->syncOperator();
 
@@ -56,11 +53,11 @@ class Search
 
     public function comparisonOperator(string $comparisonOperator): self
     {
-        if (! $this->operators::keys()->contains($comparisonOperator)) {
-            throw ComparisonOperator::unknown();
+        if (ComparisonOperator::tryFrom($comparisonOperator) === null) {
+            throw ComparisonException::unknown();
         }
 
-        $this->comparisonOperator = $comparisonOperator;
+        $this->comparisonOperator = ComparisonOperator::from($comparisonOperator);
 
         $this->syncOperator();
 
@@ -69,7 +66,7 @@ class Search
 
     public function handle(): Builder
     {
-        if ($this->searchMode === SearchModes::Algolia) {
+        if ($this->searchMode === SearchMode::Algolia) {
             return $this->searchProvider();
         }
 
@@ -109,23 +106,23 @@ class Search
 
     private function syncOperator()
     {
-        if ($this->searchMode === SearchModes::ExactMatch) {
-            $this->comparisonOperator = $this->operators::Equal;
-        } elseif ($this->searchMode === SearchModes::DoesntContain) {
-            $this->comparisonOperator = $this->operators::invert($this->comparisonOperator);
+        if ($this->searchMode === SearchMode::ExactMatch) {
+            $this->comparisonOperator = ComparisonOperator::Equal;
+        } elseif ($this->searchMode === SearchMode::DoesntContain) {
+            $this->comparisonOperator = $this->comparisonOperator->invert();
         }
     }
 
     private function searchArguments(): Collection
     {
-        return $this->searchMode === SearchModes::Full
+        return $this->searchMode === SearchMode::Full
             ? new Collection(explode(' ', $this->search))
             : new Collection($this->search);
     }
 
     private function matchArgument(Builder $query, $argument): void
     {
-        $where = $this->searchMode === SearchModes::DoesntContain
+        $where = $this->searchMode === SearchMode::DoesntContain
             ? 'where'
             : 'orWhere';
 
@@ -137,7 +134,7 @@ class Search
             ->{$where}(fn ($query) => $query->whereRelation(
                 Str::beforeLast($relation, '.'),
                 Str::afterLast($relation, '.'),
-                $this->comparisonOperator,
+                $this->comparisonOperator->value,
                 $this->wildcards($argument)
             )));
     }
@@ -145,11 +142,11 @@ class Search
     private function wildcards($argument): string
     {
         return match ($this->searchMode) {
-            SearchModes::Full,
-            SearchModes::DoesntContain => '%'.$argument.'%',
-            SearchModes::StartsWith => $argument.'%',
-            SearchModes::EndsWith => '%'.$argument,
-            SearchModes::ExactMatch => is_bool($argument) ? (int) $argument : $argument,
+            SearchMode::Full,
+            SearchMode::DoesntContain => '%'.$argument.'%',
+            SearchMode::StartsWith => $argument.'%',
+            SearchMode::EndsWith => '%'.$argument,
+            SearchMode::ExactMatch => is_bool($argument) ? (int) $argument : $argument,
         };
     }
 }

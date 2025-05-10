@@ -2,8 +2,8 @@
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Config;
-use LaravelEnso\Filters\Enums\Intervals;
-use LaravelEnso\Filters\Services\Interval;
+use LaravelEnso\Filters\Enums\Interval as Enum;
+use LaravelEnso\Filters\Services\Interval as Model;
 use Tests\TestCase;
 
 class IntervalTest extends TestCase
@@ -16,7 +16,7 @@ class IntervalTest extends TestCase
     private Closure $incrementer;
     private string $labelFormat;
 
-    private Interval $interval;
+    private Model $Model;
     private array $expectedStartDates;
     private array $expectedEndDates;
     private array $expectedLabels;
@@ -42,7 +42,7 @@ class IntervalTest extends TestCase
     {
         $this->initialStart = Carbon::today();
         $this->initialEnd = Carbon::today()->addHour();
-        $this->type = Intervals::Today;
+        $this->type = Enum::Today->value;
         $this->hourly();
     }
 
@@ -51,7 +51,7 @@ class IntervalTest extends TestCase
     {
         $this->initialStart = Carbon::today()->startOfWeek();
         $this->initialEnd = Carbon::today()->startOfWeek()->addDay();
-        $this->type = Intervals::ThisWeek;
+        $this->type = Enum::ThisWeek->value;
         $this->daily();
     }
 
@@ -60,7 +60,7 @@ class IntervalTest extends TestCase
     {
         $this->initialStart = Carbon::today()->startOfMonth();
         $this->initialEnd = Carbon::today()->startOfMonth()->addDay();
-        $this->type = Intervals::ThisMonth;
+        $this->type = Enum::ThisMonth->value;
         $this->daily();
     }
 
@@ -69,7 +69,7 @@ class IntervalTest extends TestCase
     {
         $this->initialStart = Carbon::today()->startOfYear();
         $this->initialEnd = Carbon::today()->startOfYear()->addMonth();
-        $this->type = Intervals::ThisYear;
+        $this->type = Enum::ThisYear->value;
         $this->monthly();
     }
 
@@ -78,7 +78,7 @@ class IntervalTest extends TestCase
     {
         $this->initialStart = Carbon::yesterday();
         $this->initialEnd = Carbon::yesterday()->addHour();
-        $this->type = Intervals::Yesterday;
+        $this->type = Enum::Yesterday->value;
         $this->hourly();
     }
 
@@ -87,7 +87,7 @@ class IntervalTest extends TestCase
     {
         $this->initialStart = Carbon::today()->subWeek()->startOfWeek();
         $this->initialEnd = Carbon::today()->subWeek()->startOfWeek()->addDay();
-        $this->type = Intervals::LastWeek;
+        $this->type = Enum::LastWeek->value;
         $this->daily();
     }
 
@@ -98,7 +98,7 @@ class IntervalTest extends TestCase
             ->subMonth()->startOfMonth();
         $this->initialEnd = Carbon::today()->startOfMonth()
             ->subMonth()->startOfMonth()->addDay();
-        $this->type = Intervals::LastMonth;
+        $this->type = Enum::LastMonth->value;
         $this->daily();
     }
 
@@ -107,7 +107,7 @@ class IntervalTest extends TestCase
     {
         $this->initialStart = Carbon::today()->subYear()->startOfYear();
         $this->initialEnd = Carbon::today()->subYear()->startOfYear()->addMonth();
-        $this->type = Intervals::LastYear;
+        $this->type = Enum::LastYear->value;
         $this->monthly();
     }
 
@@ -116,7 +116,7 @@ class IntervalTest extends TestCase
     {
         $this->initialStart = Carbon::tomorrow();
         $this->initialEnd = Carbon::tomorrow()->addHour();
-        $this->type = Intervals::Tomorrow;
+        $this->type = Enum::Tomorrow->value;
         $this->hourly();
     }
 
@@ -125,7 +125,7 @@ class IntervalTest extends TestCase
     {
         $this->initialStart = Carbon::today()->addWeek()->startOfWeek();
         $this->initialEnd = Carbon::today()->addWeek()->startOfWeek()->addDay();
-        $this->type = Intervals::NextWeek;
+        $this->type = Enum::NextWeek->value;
         $this->daily();
     }
 
@@ -136,7 +136,7 @@ class IntervalTest extends TestCase
             ->addMonth()->startOfMonth();
         $this->initialEnd = Carbon::today()->startOfMonth()
             ->addMonth()->startOfMonth()->addDay();
-        $this->type = Intervals::NextMonth;
+        $this->type = Enum::NextMonth->value;
         $this->daily();
     }
 
@@ -145,7 +145,7 @@ class IntervalTest extends TestCase
     {
         $this->initialStart = Carbon::today()->addYear()->startOfYear();
         $this->initialEnd = Carbon::today()->addYear()->startOfYear()->addMonth();
-        $this->type = Intervals::NextYear;
+        $this->type = Enum::NextYear->value;
         $this->monthly();
     }
 
@@ -156,7 +156,7 @@ class IntervalTest extends TestCase
         $this->max = Carbon::today()->addDay();
         $this->initialStart = Carbon::today()->startOfDay();
         $this->initialEnd = Carbon::today()->startOfDay()->addHour();
-        $this->type = Intervals::Custom;
+        $this->type = Enum::Custom->value;
         $this->hourly();
     }
 
@@ -167,7 +167,7 @@ class IntervalTest extends TestCase
         $this->max = Carbon::today()->addDays(5);
         $this->initialStart = Carbon::today()->startOfDay();
         $this->initialEnd = Carbon::today()->startOfDay()->addDay();
-        $this->type = Intervals::Custom;
+        $this->type = Enum::Custom->value;
         $this->daily();
     }
 
@@ -178,7 +178,7 @@ class IntervalTest extends TestCase
         $this->max = Carbon::today()->addMonths(2);
         $this->initialStart = Carbon::today();
         $this->initialEnd = Carbon::today()->addMonth();
-        $this->type = Intervals::Custom;
+        $this->type = Enum::Custom->value;
         $this->monthly();
     }
 
@@ -189,7 +189,7 @@ class IntervalTest extends TestCase
         $this->max = Carbon::today()->addYears(2);
         $this->initialStart = Carbon::today();
         $this->initialEnd = Carbon::today()->addYear();
-        $this->type = Intervals::Custom;
+        $this->type = Enum::Custom->value;
         $this->yearly();
     }
 
@@ -230,7 +230,7 @@ class IntervalTest extends TestCase
 
     private function init()
     {
-        $this->interval = new Interval($this->type, $this->min, $this->max);
+        $this->interval = new Model($this->type, $this->min, $this->max);
 
         return $this;
     }

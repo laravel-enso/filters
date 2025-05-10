@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Config;
 use Iterator;
 use LaravelEnso\Filters\DTOs\Segment;
 use LaravelEnso\Filters\Enums\Adjustments;
-use LaravelEnso\Filters\Enums\Intervals;
-use LaravelEnso\Filters\Enums\TimeSegments;
+use LaravelEnso\Filters\Enums\Interval as Enum;
+use LaravelEnso\Filters\Enums\TimeSegment;
 use LaravelEnso\Filters\Exceptions\Interval as Exception;
 
 class Interval implements Iterator
@@ -88,12 +88,12 @@ class Interval implements Iterator
     private function scenario(): self
     {
         return match ($this->type) {
-            Intervals::Today, Intervals::Yesterday, Intervals::Tomorrow => $this->days()->hourly(),
-            Intervals::ThisWeek, Intervals::LastWeek, Intervals::NextWeek => $this->weeks()->daily(),
-            Intervals::ThisMonth, Intervals::LastMonth, Intervals::NextMonth => $this->months()->daily(),
-            Intervals::ThisYear, Intervals::LastYear, Intervals::NextYear => $this->years()->monthly(),
-            Intervals::Custom => $this->custom(),
-            Intervals::All => $this->all(),
+            Enum::Today, Enum::Yesterday, Enum::Tomorrow => $this->days()->hourly(),
+            Enum::ThisWeek, Enum::LastWeek, Enum::NextWeek => $this->weeks()->daily(),
+            Enum::ThisMonth, Enum::LastMonth, Enum::NextMonth => $this->months()->daily(),
+            Enum::ThisYear, Enum::LastYear, Enum::NextYear => $this->years()->monthly(),
+            Enum::Custom => $this->custom(),
+            Enum::All => $this->all(),
         };
     }
 
@@ -109,7 +109,7 @@ class Interval implements Iterator
     {
         $this->incrementer = fn (Carbon $date) => $date->addHour();
         $this->labelFormat = 'H';
-        $this->timeSegment = TimeSegments::Hourly;
+        $this->timeSegment = TimeSegment::Hourly->value;
 
         return $this;
     }
@@ -126,7 +126,7 @@ class Interval implements Iterator
     {
         $this->incrementer = fn (Carbon $date) => $date->addDay();
         $this->labelFormat = Config::get('enso.config.dateFormat');
-        $this->timeSegment = TimeSegments::Daily;
+        $this->timeSegment = TimeSegment::Daily->value;
 
         return $this;
     }
@@ -152,7 +152,7 @@ class Interval implements Iterator
     {
         $this->incrementer = fn (Carbon $date) => $date->addMonth();
         $this->labelFormat = 'M-y';
-        $this->timeSegment = TimeSegments::Monthly;
+        $this->timeSegment = TimeSegment::Monthly->value;
 
         return $this;
     }
@@ -170,7 +170,7 @@ class Interval implements Iterator
     {
         $this->incrementer = fn (Carbon $date) => $date->addYear();
         $this->labelFormat = 'Y';
-        $this->timeSegment = TimeSegments::Yearly;
+        $this->timeSegment = TimeSegment::Yearly->value;
 
         return $this;
     }
@@ -217,18 +217,18 @@ class Interval implements Iterator
 
     private function label(): string
     {
-        return in_array($this->type, [Intervals::Today, Intervals::Yesterday, Intervals::Tomorrow])
+        return in_array($this->type, [Enum::Today, Enum::Yesterday, Enum::Tomorrow])
             ? $this->end->format($this->labelFormat)
             : $this->start->format($this->labelFormat);
     }
 
     private function validate(): void
     {
-        if (! Intervals::keys()->contains($this->type)) {
+        if (! Enum::from($this->type)) {
             throw Exception::type($this->type);
         }
 
-        if (Intervals::isManual($this->type)) {
+        if (Enum::isManual($this->type)) {
             if (! $this->min || ! $this->max) {
                 throw Exception::limit();
             }

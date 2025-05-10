@@ -1,7 +1,7 @@
 <?php
 
 use Carbon\Carbon;
-use LaravelEnso\Filters\Enums\Intervals;
+use LaravelEnso\Filters\Enums\Interval as Enum;
 use LaravelEnso\Filters\Exceptions\Interval as Exception;
 use LaravelEnso\Filters\Services\Interval;
 use Tests\TestCase;
@@ -25,7 +25,7 @@ class IntervalValidatorTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(Exception::limit()->getMessage());
 
-        new Interval(Intervals::Custom);
+        new Interval(Enum::Custom->value);
     }
 
     /** @test */
@@ -34,6 +34,6 @@ class IntervalValidatorTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage(Exception::interval()->getMessage());
 
-        new Interval(Intervals::Custom, Carbon::tomorrow(), Carbon::today());
+        new Interval(Enum::Custom->value, Carbon::tomorrow(), Carbon::today());
     }
 }
