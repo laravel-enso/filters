@@ -5,10 +5,11 @@ use LaravelEnso\Filters\Enums\Intervals;
 use LaravelEnso\Filters\Exceptions\Interval as Exception;
 use LaravelEnso\Filters\Services\Interval;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class IntervalValidatorTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function validates_type()
     {
         $type = 'unknown_type';
@@ -19,7 +20,7 @@ class IntervalValidatorTest extends TestCase
         new Interval($type);
     }
 
-    /** @test */
+    #[Test]
     public function validates_limit_requirement_on_manual_interval()
     {
         $this->expectException(Exception::class);
@@ -28,7 +29,7 @@ class IntervalValidatorTest extends TestCase
         new Interval(Intervals::Custom);
     }
 
-    /** @test */
+    #[Test]
     public function validates_interval_on_manual_interval()
     {
         $this->expectException(Exception::class);

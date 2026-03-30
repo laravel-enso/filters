@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 use LaravelEnso\Filters\Enums\SearchModes;
 use LaravelEnso\Filters\Services\Search;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SearchTest extends TestCase
 {
@@ -25,7 +26,7 @@ class SearchTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function can_search_by_attribute()
     {
         $search = $this->model->name;
@@ -34,7 +35,7 @@ class SearchTest extends TestCase
         $this->assertTrue($this->model->is($query->first()));
     }
 
-    /** @test */
+    #[Test]
     public function can_search_by_multiple_attributes()
     {
         $search = "{$this->model->name} {$this->model->email}";
@@ -43,7 +44,7 @@ class SearchTest extends TestCase
         $this->assertTrue($this->model->is($query->first()));
     }
 
-    /** @test */
+    #[Test]
     public function can_search_by_relation()
     {
         $this->createRelationTable();
@@ -56,7 +57,7 @@ class SearchTest extends TestCase
         $this->assertTrue($this->model->is($query->first()));
     }
 
-    /** @test */
+    #[Test]
     public function can_search_full()
     {
         $search = $this->model->name[1];
@@ -67,7 +68,7 @@ class SearchTest extends TestCase
         $this->assertTrue($this->model->is($query->first()));
     }
 
-    /** @test */
+    #[Test]
     public function can_search_exact_match()
     {
         $search = $this->model->name;
@@ -78,7 +79,7 @@ class SearchTest extends TestCase
         $this->assertTrue($this->model->is($query->first()));
     }
 
-    /** @test */
+    #[Test]
     public function does_not_return_results_if_searching_exact_match_with_partial_argument()
     {
         $search = $this->model->name[1];
@@ -89,7 +90,7 @@ class SearchTest extends TestCase
         $this->assertEmpty($query->get());
     }
 
-    /** @test */
+    #[Test]
     public function can_search_doesnt_contain()
     {
         $search = $this->model->name[1];
@@ -100,7 +101,7 @@ class SearchTest extends TestCase
         $this->assertEmpty($query->get());
     }
 
-    /** @test */
+    #[Test]
     public function can_search_if_starts_with()
     {
         $search = $this->model->name[0];
@@ -111,7 +112,7 @@ class SearchTest extends TestCase
         $this->assertTrue($this->model->is($query->first()));
     }
 
-    /** @test */
+    #[Test]
     public function can_search_if_ends_with()
     {
         $search = substr($this->model->name, -1);
