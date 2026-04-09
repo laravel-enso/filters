@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Config;
 use LaravelEnso\Filters\Enums\Intervals;
 use LaravelEnso\Filters\Services\Interval;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class IntervalTest extends TestCase
 {
@@ -37,7 +38,7 @@ class IntervalTest extends TestCase
         $this->actualEndDates = [];
     }
 
-    /** @test */
+    #[Test]
     public function can_generate_today_interval()
     {
         $this->initialStart = Carbon::today();
@@ -46,7 +47,7 @@ class IntervalTest extends TestCase
         $this->hourly();
     }
 
-    /** @test */
+    #[Test]
     public function can_generate_this_week_interval()
     {
         $this->initialStart = Carbon::today()->startOfWeek();
@@ -55,7 +56,7 @@ class IntervalTest extends TestCase
         $this->daily();
     }
 
-    /** @test */
+    #[Test]
     public function can_generate_this_month_interval()
     {
         $this->initialStart = Carbon::today()->startOfMonth();
@@ -64,7 +65,7 @@ class IntervalTest extends TestCase
         $this->daily();
     }
 
-    /** @test */
+    #[Test]
     public function can_generate_this_year_interval()
     {
         $this->initialStart = Carbon::today()->startOfYear();
@@ -73,7 +74,7 @@ class IntervalTest extends TestCase
         $this->monthly();
     }
 
-    /** @test */
+    #[Test]
     public function can_generate_yesterday_interval()
     {
         $this->initialStart = Carbon::yesterday();
@@ -82,7 +83,7 @@ class IntervalTest extends TestCase
         $this->hourly();
     }
 
-    /** @test */
+    #[Test]
     public function can_generate_last_week_interval()
     {
         $this->initialStart = Carbon::today()->subWeek()->startOfWeek();
@@ -91,7 +92,7 @@ class IntervalTest extends TestCase
         $this->daily();
     }
 
-    /** @test */
+    #[Test]
     public function can_generate_last_month_interval()
     {
         $this->initialStart = Carbon::today()->startOfMonth()
@@ -102,7 +103,7 @@ class IntervalTest extends TestCase
         $this->daily();
     }
 
-    /** @test */
+    #[Test]
     public function can_generate_last_year_interval()
     {
         $this->initialStart = Carbon::today()->subYear()->startOfYear();
@@ -111,7 +112,7 @@ class IntervalTest extends TestCase
         $this->monthly();
     }
 
-    /** @test */
+    #[Test]
     public function can_generate_tomorrow_interval()
     {
         $this->initialStart = Carbon::tomorrow();
@@ -120,7 +121,7 @@ class IntervalTest extends TestCase
         $this->hourly();
     }
 
-    /** @test */
+    #[Test]
     public function can_generate_next_week_interval()
     {
         $this->initialStart = Carbon::today()->addWeek()->startOfWeek();
@@ -129,7 +130,7 @@ class IntervalTest extends TestCase
         $this->daily();
     }
 
-    /** @test */
+    #[Test]
     public function can_generate_next_month_interval()
     {
         $this->initialStart = Carbon::today()->startOfMonth()
@@ -140,7 +141,7 @@ class IntervalTest extends TestCase
         $this->daily();
     }
 
-    /** @test */
+    #[Test]
     public function can_generate_next_year_interval()
     {
         $this->initialStart = Carbon::today()->addYear()->startOfYear();
@@ -149,7 +150,7 @@ class IntervalTest extends TestCase
         $this->monthly();
     }
 
-    /** @test */
+    #[Test]
     public function can_identify_hourly_scenario_on_manual_limits()
     {
         $this->min = Carbon::today();
@@ -160,7 +161,7 @@ class IntervalTest extends TestCase
         $this->hourly();
     }
 
-    /** @test */
+    #[Test]
     public function can_identify_daily_scenario_on_manual_limits()
     {
         $this->min = Carbon::today();
@@ -171,7 +172,7 @@ class IntervalTest extends TestCase
         $this->daily();
     }
 
-    /** @test */
+    #[Test]
     public function can_identify_monthly_scenario_on_manual_limits()
     {
         $this->min = Carbon::today();
@@ -182,7 +183,7 @@ class IntervalTest extends TestCase
         $this->monthly();
     }
 
-    /** @test */
+    #[Test]
     public function can_identify_yearly_scenario_on_manual_limits()
     {
         $this->min = Carbon::today();

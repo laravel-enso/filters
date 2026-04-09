@@ -6,6 +6,7 @@ use LaravelEnso\Filters\Exceptions\ComparisonOperator;
 use LaravelEnso\Filters\Exceptions\SearchMode;
 use LaravelEnso\Filters\Services\Search;
 use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class SearchValidationTest extends TestCase
 {
@@ -16,7 +17,7 @@ class SearchValidationTest extends TestCase
         $this->createTestTable();
     }
 
-    /** @test */
+    #[Test]
     public function validates_search_mode()
     {
         $mode = 'unknown_mode';
@@ -28,7 +29,7 @@ class SearchValidationTest extends TestCase
             ->searchMode($mode);
     }
 
-    /** @test */
+    #[Test]
     public function validates_comparison_operator()
     {
         $comparisonOperator = 'unknown';
