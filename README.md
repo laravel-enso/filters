@@ -73,6 +73,10 @@ Required Enso packages:
 
 - [`laravel-enso/helpers`](https://docs.laravel-enso.com/backend/helpers.html) [↗](https://github.com/laravel-enso/helpers)
 
+Companion frontend package:
+
+- [`@enso-ui/filters`](https://docs.laravel-enso.com/frontend/filters.html) [↗](https://github.com/enso-ui/filters)
+
 ## Contributions
 
 are welcome. Pull requests are great, but issues are good too.
