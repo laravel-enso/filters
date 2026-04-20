@@ -1,6 +1,6 @@
 {
     "name": "laravel-enso/filters",
-    "description": "Filters dependency for Laravel Enso",
+    "description": "Search and interval helpers for Laravel Enso",
     "keywords": [
         "laravel-enso",
         "filters",
