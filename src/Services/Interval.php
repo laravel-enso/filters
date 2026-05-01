@@ -5,12 +5,14 @@ namespace LaravelEnso\Filters\Services;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Support\Facades\Config;
+use InvalidArgumentException;
 use Iterator;
 use LaravelEnso\Filters\DTOs\Segment;
 use LaravelEnso\Filters\Enums\Adjustments;
 use LaravelEnso\Filters\Enums\Intervals;
 use LaravelEnso\Filters\Enums\TimeSegments;
 use LaravelEnso\Filters\Exceptions\Interval as Exception;
+use LaravelEnso\Helpers\Exceptions\EnsoException;
 
 class Interval implements Iterator
 {
@@ -26,9 +28,16 @@ class Interval implements Iterator
     public function __construct(
         private string $type,
         private ?Carbon $min = null,
-        private ?Carbon $max = null
+        private ?Carbon $max = null,
+        private bool $ui = true,
     ) {
-        $this->validate();
+        try {
+            $this->validate();
+        } catch (InvalidArgumentException $th) {
+            throw $this->ui
+                ? new EnsoException($th->getMessage())
+                : $th;
+        }
 
         $this->labels = [];
         $this->adjustment = Adjustments::get($this->type);
